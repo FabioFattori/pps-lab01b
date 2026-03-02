@@ -29,7 +29,8 @@ public class BronzeBankAccount implements BankAccount {
 
     @Override
     public int getWithdrawFee() {
-        if (getBalance() >= 100) {
+        final int feeLimit = 100;
+        if (getBalance() >= feeLimit) {
             return 1;
         }
 

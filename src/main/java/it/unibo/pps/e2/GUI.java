@@ -1,6 +1,9 @@
 package it.unibo.pps.e2;
 
+import it.unibo.pps.e2.generators.RandomPositionGenerator;
+
 import javax.swing.*;
+import java.io.Serial;
 import java.util.*;
 import java.util.Map.Entry;
 import java.awt.*;
@@ -8,13 +11,14 @@ import java.awt.event.ActionListener;
 
 public class GUI extends JFrame {
     
+    @Serial
     private static final long serialVersionUID = -6218820567019985015L;
     private final Map<JButton,Pair<Integer,Integer>> buttons = new HashMap<>();
     private final Logics logics;
     private final static int SIZE = 5;
     
     public GUI() {
-        this.logics = new LogicsImpl(SIZE);
+        this.logics = new LogicsImpl(SIZE, new RandomPositionGenerator());
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(100*SIZE, 100*SIZE);
         
