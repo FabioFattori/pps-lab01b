@@ -1,19 +1,19 @@
 package it.unibo.pps.e2;
 
 import it.unibo.pps.e2.generators.PositionGenerator;
-
-import java.util.*;
+import it.unibo.pps.e2.piecelogics.Piece;
 
 public class LogicsImpl implements Logics {
 
     private final Position pawn;
-    private Position knight;
+    private final Piece movingPiece;
     private final int size;
 
-    public LogicsImpl(int size, PositionGenerator generator) {
+    public LogicsImpl(int size, PositionGenerator generator, Piece movingPiece) {
         this.size = size;
         this.pawn = generator.generatePawnPosition(size);
-        this.knight = generator.generateKnightPosition(this.pawn, size);
+        this.movingPiece = movingPiece;
+        this.movingPiece.initializePiecePosition(generator.generateKnightPosition(this.pawn, size));
     }
 
     private boolean areCoordinatesInGameBoard(int row, int col) {
@@ -26,18 +26,15 @@ public class LogicsImpl implements Logics {
             throw new IndexOutOfBoundsException();
         }
         // Below a compact way to express allowed moves for the knight
-        int x = row - this.knight.getX();
-        int y = col - this.knight.getY();
-        if (x != 0 && y != 0 && Math.abs(x) + Math.abs(y) == 3) {
-            this.knight = new Position(row, col);
-            return this.pawn.equals(this.knight);
+        if (movingPiece.validateAndUpdateCurrentPosition(new Position(row, col))) {
+            return this.pawn.equals(this.movingPiece.getCurrentPosition());
         }
         return false;
     }
 
     @Override
     public boolean hasKnight(int row, int col) {
-        return this.knight.equals(row, col);
+        return this.movingPiece.getCurrentPosition().equals(row, col);
     }
 
     @Override
@@ -52,6 +49,6 @@ public class LogicsImpl implements Logics {
 
     @Override
     public Position getKnightCurrentPosition() {
-        return this.knight.copy();
+        return this.movingPiece.getCurrentPosition().copy();
     }
 }

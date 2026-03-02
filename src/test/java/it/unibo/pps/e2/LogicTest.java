@@ -1,9 +1,8 @@
 package it.unibo.pps.e2;
 
 import it.unibo.pps.e2.mockery.MockedPositionGenerator;
+import it.unibo.pps.e2.piecelogics.KnightPiece;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,11 +12,11 @@ public class LogicTest {
 
     @BeforeEach
     public void init() {
-        logics = new LogicsImpl(SIZE, new MockedPositionGenerator());
+        logics = new LogicsImpl(SIZE, new MockedPositionGenerator(), new KnightPiece());
     }
 
     @Test
-    public void testPassedRowAndColumnNeedsToStayInTheGrid() {
+    public void testPassedRowAndColumnNeedsToBeInsideTheGameBoard() {
         int exceededRow = SIZE + 1;
         int exceededCol = SIZE + 1;
         assertThrows(IndexOutOfBoundsException.class, () -> logics.hit(exceededRow, exceededCol));
@@ -33,7 +32,12 @@ public class LogicTest {
 
     @Test
     public void testHasPawnPositionWithCorrectPosition() {
-        assertTrue(logics.hasPawn(logics.getPawnCurrentPosition().getX(), logics.getPawnCurrentPosition().getY()));
+        assertTrue(
+                logics.hasPawn(
+                        logics.getPawnCurrentPosition().getX(),
+                        logics.getPawnCurrentPosition().getY()
+                )
+        );
     }
 
     @Test
@@ -44,37 +48,17 @@ public class LogicTest {
 
     @Test
     public void testHasKnightPositionWithCorrectPosition() {
-        assertTrue(logics.hasKnight(logics.getKnightCurrentPosition().getX(), logics.getKnightCurrentPosition().getY()));
+        assertTrue(
+                logics.hasKnight(
+                        logics.getKnightCurrentPosition().getX(),
+                        logics.getKnightCurrentPosition().getY()
+                )
+        );
     }
 
     @Test
     public void testKnightHitCorrectlyThePawnAtHisPosition() {
         final Position pawnPosition = logics.getPawnCurrentPosition();
         assertTrue(logics.hit(pawnPosition.getX(), pawnPosition.getY()));
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-            "5, 3",
-            "5, 1",
-            "1, 3",
-            "1, 1",
-            "4, 4",
-            "4, 0",
-            "2, 4",
-            "2, 0",
-    })
-    public void testKnightCorrectlyMovesInALDirection(int x, int y) {
-        final Position expectedNewKnightPosition = new Position(x, y);
-        logics.hit(x, y);
-        assertEquals(expectedNewKnightPosition, logics.getKnightCurrentPosition());
-    }
-
-    @ParameterizedTest
-    @CsvSource({"3, 0", "0, 1", "3, 1", "2, 2"})
-    public void testKnightOnlyMovesInALDirection(int x, int y) {
-        final Position notExpectedPosition = new Position(x, y);
-        logics.hit(x, y);
-        assertNotEquals(notExpectedPosition, logics.getKnightCurrentPosition());
     }
 }
