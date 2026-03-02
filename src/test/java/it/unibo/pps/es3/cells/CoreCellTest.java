@@ -11,13 +11,9 @@ public abstract class CoreCellTest {
     protected final int CELL_Y = 1;
 
     @Test
-    public void testGetX(){
-        assertEquals(CELL_X, cell.getX());
-    }
-
-    @Test
-    public void testGetY(){
-        assertEquals(CELL_Y, cell.getY());
+    public void testGetPosition(){
+        assertEquals(CELL_X, cell.getPosition().getX());
+        assertEquals(CELL_Y, cell.getPosition().getY());
     }
 
     @Test

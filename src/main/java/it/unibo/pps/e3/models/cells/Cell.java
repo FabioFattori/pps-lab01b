@@ -1,9 +1,9 @@
 package it.unibo.pps.e3.models.cells;
 
-public interface Cell {
-    int getX();
+import it.unibo.pps.e3.support.Position;
 
-    int getY();
+public interface Cell {
+    Position getPosition();
 
     boolean isMine();
 

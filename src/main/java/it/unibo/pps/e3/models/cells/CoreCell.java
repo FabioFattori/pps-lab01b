@@ -12,13 +12,8 @@ public abstract class CoreCell implements Cell {
     }
 
     @Override
-    public int getX() {
-        return position.getX();
-    }
-
-    @Override
-    public int getY() {
-        return position.getY();
+    public Position getPosition() {
+        return this.position.copy();
     }
 
     @Override
