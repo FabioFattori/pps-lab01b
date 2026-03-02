@@ -16,9 +16,13 @@ public class LogicsImpl implements Logics {
         this.knight = generator.generateKnightPosition(this.pawn, size);
     }
 
+    private boolean areCoordinatesInGameBoard(int row, int col) {
+        return row < 0 || col < 0 || row >= this.size || col >= this.size;
+    }
+
     @Override
     public boolean hit(int row, int col) {
-        if (row < 0 || col < 0 || row >= this.size || col >= this.size) {
+        if (areCoordinatesInGameBoard(row, col)) {
             throw new IndexOutOfBoundsException();
         }
         // Below a compact way to express allowed moves for the knight
