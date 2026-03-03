@@ -40,15 +40,6 @@ public class GenericBoardInspector implements GeneratorBoardInspector, GameBoard
         return neighbors;
     }
 
-    @Override
-    public List<Cell> getPositionNeighbors(Position position, List<List<Cell>> generatedMatrix) {
-        if (isPositionOutsideOfBoard(position, generatedMatrix.size())) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        return getCellNeighbors(generatedMatrix.get(position.getX()).get(position.getY()), generatedMatrix);
-    }
-
     public List<List<Cell>> inspect(List<List<Cell>> generatedMatrix) {
         for (int row = 0; row < generatedMatrix.size(); row++) {
             for (int col = 0; col < generatedMatrix.get(row).size(); col++) {

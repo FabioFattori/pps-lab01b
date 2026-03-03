@@ -14,7 +14,7 @@ public class RandomBoardGenerator extends CoreBoardGenerator {
 
     @Override
     public boolean isNextGeneratedCellABomb(int row, int col) {
-        final int randomBound = 7;
+        final int randomBound = 4;
         final int bombChoice = 0;
 
         return random.nextInt(randomBound) == bombChoice;

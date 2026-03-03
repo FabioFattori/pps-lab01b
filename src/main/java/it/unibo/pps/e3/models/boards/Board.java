@@ -14,4 +14,6 @@ public interface Board {
     int getBoardSize();
 
     List<List<Cell>> getCells();
+
+    Cell getCellAtPosition(Position position);
 }

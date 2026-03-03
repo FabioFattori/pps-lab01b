@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GameBoardInspector {
     List<Cell> getCellNeighbors(Cell cell, List<List<Cell>> generatedMatrix);
-    List<Cell> getPositionNeighbors(Position position, List<List<Cell>> generatedMatrix);
+    boolean isPositionOutsideOfBoard(Position toCheck, int boardSize);
 }

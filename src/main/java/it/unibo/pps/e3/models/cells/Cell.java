@@ -10,4 +10,12 @@ public interface Cell {
     void increaseMineProximityCounter();
 
     int getMineProximityCounter();
+
+    boolean isVisible();
+
+    void toggleVisibility();
+
+    boolean isMarked();
+
+    void toggleMarked();
 }

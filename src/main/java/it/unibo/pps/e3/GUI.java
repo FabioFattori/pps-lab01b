@@ -1,5 +1,10 @@
 package it.unibo.pps.e3;
 
+import it.unibo.pps.e3.models.boards.GameBoard;
+import it.unibo.pps.e3.models.boards.RandomBoardGenerator;
+import it.unibo.pps.e3.models.boards.inspectors.GenericBoardInspector;
+import it.unibo.pps.e3.support.Position;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
@@ -11,32 +16,32 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 public class GUI extends JFrame {
-    
+
     @Serial
     private static final long serialVersionUID = -6218820567019985015L;
-    private final Map<JButton,Pair<Integer,Integer>> buttons = new HashMap<>();
+    private final Map<JButton, Pair<Integer, Integer>> buttons = new HashMap<>();
     private final Logics logics;
-    
+
     public GUI(int size) {
-        this.logics = new LogicsImpl(size);
+        this.logics = new LogicsImpl(new GameBoard(size, new RandomBoardGenerator(), new GenericBoardInspector()));
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setSize(100*size, 100*size);
-        
-        JPanel panel = new JPanel(new GridLayout(size,size));
-        this.getContentPane().add(BorderLayout.CENTER,panel);
-        
-        ActionListener onClick = (e)->{
-            final JButton bt = (JButton)e.getSource();
-            final Pair<Integer,Integer> pos = buttons.get(bt);
-            boolean aMineWasFound = false; // call the logic here to tell it that cell at 'pos' has been seleced
+        this.setSize(100 * size, 100 * size);
+
+        JPanel panel = new JPanel(new GridLayout(size, size));
+        this.getContentPane().add(BorderLayout.CENTER, panel);
+
+        ActionListener onClick = (e) -> {
+            final JButton bt = (JButton) e.getSource();
+            final Position pos = new Position(buttons.get(bt));
+            boolean aMineWasFound = logics.pickPosition(pos); // call the logic here to tell it that cell at 'pos' has been seleced
             if (aMineWasFound) {
                 quitGame();
                 JOptionPane.showMessageDialog(this, "You lost!!");
             } else {
-                drawBoard();            	
+                drawBoard();
             }
-            boolean isThereVictory = false; // call the logic here to ask if there is victory
-            if (isThereVictory){
+            boolean isThereVictory = logics.hasPlayerWon(); // call the logic here to ask if there is victory
+            if (isThereVictory) {
                 quitGame();
                 JOptionPane.showMessageDialog(this, "You won!!");
                 System.exit(0);
@@ -46,43 +51,49 @@ public class GUI extends JFrame {
         MouseInputListener onRightClick = new MouseInputAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                final JButton bt = (JButton)e.getSource();
-                if (bt.isEnabled()){
-                    final Pair<Integer,Integer> pos = buttons.get(bt);
+                final JButton bt = (JButton) e.getSource();
+                if (bt.isEnabled()) {
+                    final Pair<Integer, Integer> pos = buttons.get(bt);
                     // call the logic here to put/remove a flag
                 }
-                drawBoard(); 
+                drawBoard();
             }
         };
-                
-        for (int i=0; i<size; i++){
-            for (int j=0; j<size; j++){
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 final JButton jb = new JButton(" ");
                 jb.addActionListener(onClick);
                 jb.addMouseListener(onRightClick);
-                this.buttons.put(jb,new Pair<>(i,j));
+                this.buttons.put(jb, new Pair<>(i, j));
                 panel.add(jb);
             }
         }
         this.drawBoard();
         this.setVisible(true);
     }
-    
+
     private void quitGame() {
         this.drawBoard();
-    	for (var entry: this.buttons.entrySet()) {
+        for (var entry : this.buttons.entrySet()) {
             // call the logic here
             // if this button is a mine, draw it "*"
             // disable the button
-    	}
+        }
     }
 
     private void drawBoard() {
-        for (var entry: this.buttons.entrySet()) {
+        for (var entry : this.buttons.entrySet()) {
             // call the logic here
             // if this button is a cell with counter, put the number
             // if this button has a flag, put the flag
-    	}
+            final String displayValue = logics.getDisplayValue(new Position(entry.getValue()));
+            final JButton bt = entry.getKey();
+            bt.setText(displayValue);
+            if (!displayValue.equals(Logics.EMPTY_FLAG)) {
+                bt.setEnabled(false);
+            }
+        }
     }
-    
+
 }

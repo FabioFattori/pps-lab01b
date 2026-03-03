@@ -17,7 +17,32 @@ public class GameBoard implements Board {
 
     @Override
     public Cell pickCell(Position pickedCellCoordinates) {
-        return null;
+        this.visitNeighborsAndMakeThemVisible(pickedCellCoordinates);
+        return getCellAtPosition(pickedCellCoordinates);
+    }
+
+    @Override
+    public Cell getCellAtPosition(Position position) {
+        if (inspector.isPositionOutsideOfBoard(position, boardSize)) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        return cellMatrix.get(position.getX()).get(position.getY());
+    }
+
+    private void visitNeighborsAndMakeThemVisible(Position pickedCellCoordinates) {
+        final Cell pickedCell = getCellAtPosition(pickedCellCoordinates);
+        if (pickedCell.isVisible()) {
+            return;
+        }
+        pickedCell.toggleVisibility();
+        if (pickedCell.isMine()) {
+            return;
+        }
+
+        inspector.getCellNeighbors(pickedCell, cellMatrix).stream()
+                .filter((cell -> !cell.isMine() && !cell.isVisible()))
+                .forEach((neighbour) -> visitNeighborsAndMakeThemVisible(neighbour.getPosition()));
     }
 
     @Override

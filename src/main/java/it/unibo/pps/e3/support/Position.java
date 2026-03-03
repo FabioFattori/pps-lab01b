@@ -1,6 +1,6 @@
 package it.unibo.pps.e3.support;
 
-import it.unibo.pps.e2.Pair;
+import it.unibo.pps.e3.Pair;
 
 public class Position {
     private final Pair<Integer, Integer> coordinates;
@@ -9,16 +9,20 @@ public class Position {
         coordinates = new Pair<>(x, y);
     }
 
+    public Position(Pair<Integer, Integer> pair) {
+        this.coordinates = pair;
+    }
+
     public Position copy() {
-        return new Position(coordinates.getX(), coordinates.getY());
+        return new Position(coordinates.x(), coordinates.y());
     }
 
     public int getX() {
-        return coordinates.getX();
+        return coordinates.x();
     }
 
     public int getY() {
-        return coordinates.getY();
+        return coordinates.y();
     }
 
     @Override
