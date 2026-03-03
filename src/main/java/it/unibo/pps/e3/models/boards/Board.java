@@ -1,5 +1,6 @@
 package it.unibo.pps.e3.models.boards;
 
+import it.unibo.pps.e3.models.boards.enums.BoardState;
 import it.unibo.pps.e3.models.boards.inspectors.GameBoardInspector;
 import it.unibo.pps.e3.models.cells.Cell;
 import it.unibo.pps.e3.support.Position;
@@ -16,4 +17,12 @@ public interface Board {
     List<List<Cell>> getCells();
 
     Cell getCellAtPosition(Position position);
+
+    void makeAllTheBombsVisible();
+
+    BoardState getCurrentState();
+
+    boolean hasPlayerWon();
+
+    void toggleMarkPosition(Position position);
 }

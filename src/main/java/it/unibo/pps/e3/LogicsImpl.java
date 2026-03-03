@@ -18,28 +18,35 @@ public class LogicsImpl implements Logics {
 
     @Override
     public boolean hasPlayerWon() {
-        return this.board.getCells().stream()
-                .filter(row ->
-                        !row.stream().filter(cell -> !cell.isVisible() && !cell.isMine()).toList().isEmpty()
-                ).toList().isEmpty();
+        return board.hasPlayerWon();
     }
 
     @Override
     public String getDisplayValue(Position position) {
         final Cell cell = board.getCellAtPosition(position);
 
-        if (cell.isMarked()){
+        if (cell.isMarked() && !cell.isVisible()) {
             return MARKED_FLAG;
         }
 
-        if(!cell.isVisible()){
+        if (!cell.isVisible()) {
             return EMPTY_FLAG;
         }
 
-        if(cell.isMine()) {
+        if (cell.isMine()) {
             return BOMB_FLAG;
         }
 
         return String.valueOf(cell.getMineProximityCounter());
+    }
+
+    @Override
+    public void toggleMarkPosition(Position position) {
+        board.toggleMarkPosition(position);
+    }
+
+    @Override
+    public void displayAllMinesAndDisableUserInteraction() {
+        board.makeAllTheBombsVisible();
     }
 }

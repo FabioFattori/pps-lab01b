@@ -10,6 +10,9 @@ import it.unibo.pps.es3.mockery.MockedBoardGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LogicTest {
@@ -26,6 +29,17 @@ public class LogicTest {
 
     private Cell getBombCell() {
         return board.getCells().getFirst().getFirst();
+    }
+
+    private List<Cell> getBombs() {
+        final List<Cell> bombs = new ArrayList<>();
+        final List<List<Cell>> cells = board.getCells();
+
+        for (List<Cell> cell : cells) {
+            bombs.addAll(cell.stream().filter(Cell::isMine).toList());
+        }
+
+        return bombs;
     }
 
     @BeforeEach
@@ -93,5 +107,25 @@ public class LogicTest {
         final Cell bomb = getBombCell();
         final String expectedDisplayValue = Logics.EMPTY_FLAG;
         assertEquals(expectedDisplayValue, logic.getDisplayValue(bomb.getPosition()));
+    }
+
+    @Test
+    void testToggleMarkPosition() {
+        logic.toggleMarkPosition(getBombCell().getPosition());
+        assertTrue(getBombCell().isMarked());
+        logic.toggleMarkPosition(getBombCell().getPosition());
+        assertFalse(getBombCell().isMarked());
+    }
+
+    @Test
+    public void testShowAllMinesActuallyMakesTheMinesVisible() {
+        logic.displayAllMinesAndDisableUserInteraction();
+        getBombs().forEach(cell -> assertTrue(cell.isVisible()));
+    }
+
+    @Test
+    public void testAfterAllMinesAreShownUserInteractionShouldBeDisabled() {
+        logic.displayAllMinesAndDisableUserInteraction();
+        assertThrows(IllegalStateException.class, () -> logic.pickPosition(getBombCell().getPosition()));
     }
 }

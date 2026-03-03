@@ -55,6 +55,7 @@ public class GUI extends JFrame {
                 if (bt.isEnabled()) {
                     final Pair<Integer, Integer> pos = buttons.get(bt);
                     // call the logic here to put/remove a flag
+                    logics.toggleMarkPosition(new Position(pos));
                 }
                 drawBoard();
             }
@@ -74,12 +75,8 @@ public class GUI extends JFrame {
     }
 
     private void quitGame() {
+        logics.displayAllMinesAndDisableUserInteraction();
         this.drawBoard();
-        for (var entry : this.buttons.entrySet()) {
-            // call the logic here
-            // if this button is a mine, draw it "*"
-            // disable the button
-        }
     }
 
     private void drawBoard() {
@@ -90,7 +87,7 @@ public class GUI extends JFrame {
             final String displayValue = logics.getDisplayValue(new Position(entry.getValue()));
             final JButton bt = entry.getKey();
             bt.setText(displayValue);
-            if (!displayValue.equals(Logics.EMPTY_FLAG)) {
+            if (!displayValue.equals(Logics.EMPTY_FLAG) && !displayValue.equals(Logics.MARKED_FLAG)) {
                 bt.setEnabled(false);
             }
         }

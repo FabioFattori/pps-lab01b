@@ -1,6 +1,7 @@
 package it.unibo.pps.es3;
 
 import it.unibo.pps.e3.models.boards.BoardGenerator;
+import it.unibo.pps.e3.models.boards.enums.BoardState;
 import it.unibo.pps.e3.models.boards.inspectors.GenericBoardInspector;
 import it.unibo.pps.e3.models.boards.GameBoard;
 import it.unibo.pps.e3.models.cells.BombCell;
@@ -23,6 +24,7 @@ public class GameBoardTest {
     private BoardGenerator generator;
     private GenericBoardInspector inspector;
     private List<List<Cell>> cells;
+    private final Position OUTSIDE_BOARD_POSITION = new Position(-1, -1);
 
     @BeforeEach
     public void init() {
@@ -93,8 +95,8 @@ public class GameBoardTest {
 
     @Test
     public void testPickWithPositionOutsideOfBoardThrowsException() {
-        final Position outsideOfBoardPosition = new Position(-1, -1);
-        assertThrows(IndexOutOfBoundsException.class, () -> board.pickCell(outsideOfBoardPosition));
+        assertThrows(IndexOutOfBoundsException.class, () -> board.pickCell(OUTSIDE_BOARD_POSITION));
+        assertEquals(BoardState.InvalidState, board.getCurrentState());
     }
 
     private void assertVisibleRecursively(Cell cell, Set<Cell> visited) {
@@ -126,5 +128,44 @@ public class GameBoardTest {
         board.pickCell(pickedCell.getPosition());
         board.pickCell(pickedCell.getPosition());
         assertVisibleRecursively(pickedCell, new HashSet<>());
+    }
+
+    @Test
+    public void testBoardAtInitializationMustBeReady() {
+        assertEquals(BoardState.Ready, board.getCurrentState());
+    }
+
+    @Test
+    public void testUponShowingAllTheBombsCurrentStateMustChangeProperly() {
+        board.makeAllTheBombsVisible();
+        assertEquals(BoardState.MinesAreVisible, board.getCurrentState());
+    }
+
+    @Test
+    public void testInvalidStateBoardCanBeInitialized() {
+        assertThrows(IndexOutOfBoundsException.class, () -> board.pickCell(OUTSIDE_BOARD_POSITION));
+        board.initializeBoard(board.getBoardSize(), generator, inspector);
+        assertEquals(BoardState.Ready, board.getCurrentState());
+    }
+
+    @Test
+    public void testAtInitializationPlayerHasWonMustBeFalse() {
+        assertFalse(board.hasPlayerWon());
+    }
+
+    @Test
+    public void testAfterAMovePlayerHasNotWon() {
+        final Cell firstColumnCell = getBombCell();
+        board.pickCell(firstColumnCell.getPosition());
+        assertFalse(board.hasPlayerWon());
+    }
+
+    @Test
+    public void testHasPlayerWon() {
+        final Cell firstColumnCell = getSafeCell();
+        final Cell secondColumnCell = board.getCells().getFirst().get(4);
+        board.pickCell(firstColumnCell.getPosition());
+        board.pickCell(secondColumnCell.getPosition());
+        assertTrue(board.hasPlayerWon());
     }
 }
